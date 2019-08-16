@@ -1,12 +1,23 @@
-#                                      ;ax, bx contain the two numbers
 .global _start # Indicamos al enlazador la ubicacion de  _start 
 .text
 _start:
 
-gcd0:   xor     %rdx,%rdx                   #divide
-        div     %rbx
-        mov     %rax,%rbx                   #ax = new dividend = old divisor
-        mov     %rbx,%rdx                   #bx = new remainder
-        test    %rbx,%rbx                   #loop if remainder != 0
-        jnz     gcd0
-#                                       ;ax = gcd
+	mov $245, %rax 	#numero A, supongamos que A es mayor
+	mov $0, %rdx ; 
+	mov $35, %rbx	#numero B
+
+	while:
+		mov %rbx, %r8
+		div %rbx
+		mov %r8, %rax
+		mov %rdx, %rbx
+		mov $0, %rdx
+		cmp $0, %rbx	#(b == 0)?
+		jne while		#jump if not equal
+
+	
+	mov %rax, %rdi
+
+
+	movq $60, %rax
+	syscall
