@@ -4,7 +4,7 @@
 
 Para compilar el programa se requiere make. En el path donde se encuentra el archivo mcd.s
 
-```bash 
+```bash
   $ make
 ```
 
