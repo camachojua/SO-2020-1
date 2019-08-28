@@ -12,7 +12,7 @@ _start:
 		call getOut
 	euclides:
 		cmp $0,%rdi	#Resta rdi a 0 y altera la bandera
-		jne recursa			#Si la resta es cero, es decir, rdi es 0 y sale. Realmente no la guarda.
+		jne recursa			#Si no es 0.
 		jmp getOut
 	recursa:
 		mov $0,%rdx
@@ -21,6 +21,6 @@ _start:
 		mov %rdx,%rdi #Movemos el residuo a el lugar donde estaba b.
 		call euclides #Vuelve a llamarse.
 	getOut:
-		mov %rax,%rdi #No reportamos en rax tristemenete, pero en rdi... close enough... I guess
+		mov %rax,%rdi #Mueve a rdi
 		mov $60,%rax #calls exit
 		syscall
