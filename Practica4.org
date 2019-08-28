@@ -1,0 +1,96 @@
+* Práctica 4
+** Recuento de la práctica 3
+
+   Antes de realizar cualquier operación es necesario contar con
+   valores a ser manipulados, la forma y la ubicación de la
+   información juega un papel importante en este punto: no es lo mismo
+   que tenga un valor almacenado en un registro que ese mismo valor
+   almacenado en la memoria RAM. El ensamblador x86_64 distingue esta
+   característica de la información bajo el nombre de *modos de
+   direccionamiento*, a continuación se muestran los modos de
+   direccionamiento disponibles para esta arquitectura:
+
+   | Modo de direccionamiento | Explicación                                                                                                                                                  | Ejemplo                     |
+   |--------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------+-----------------------------|
+   | Inmediato                | El valor se inyecta al operando                                                                                                                              | =mov $42, %rax=             |
+   | Registro                 | El valor se lee desde un registro                                                                                                                            | =mov %rax, %rbx=            |
+   | Indirecto                | El registro guarda una dirección de memoria, para acceder al contenido es necesario *de-referenciar*                                                         | =mov (%rax), %rbx=          |
+   | Desplazado               | El registro guarda una dirección de memoria, el valor deseado se encuentra a *n bytes de distancia*, para acceder al contenido es necesario *de-referenciar* | =mov 2(%rax), %rbx=         |
+   | Índice                   | Registro base más un desplazamiento. El desplazamiento es el valor almacenado en =%rbx=                                                                      | =mov (%rax, %rbx), %rcx=    |
+   | Índice escalado          | Utilizado para acceder a elementos de un arreglo, se toma una base (=%rax=), un desplazamiento (=%rbx=) y un valor de salto (en bytes).                      | =mov (%rax, %rbx, 8), %rcx= |
+   | Absoluto                 | Dirección de memoria explicita.                                                                                                                              | =jmp 1024=                  |
+
+   Cuando un programa se carga en memoria la dirección de inicio del
+   programa es aleatoria, depende del modelo de memoria utilizado por
+   el sistema operativo y la carga que tiene el sistema. En principio
+   esta dirección sólo es conocida hasta tiempo de ejecución, por esta
+   razón no se debe hacer suposiciones sobre las direcciones que
+   poseen nuestras variables mientras el programa se ejecuta. Para
+   aliviar esta situación, los programadores de ensamblador utilizan
+   *segmentos base* más desplazamientos para encontrar información
+   dentro de sus programas. La familia de intrucciones utilizadas para
+   cargar la dirección *real* de una variable es *leaX* (load
+   effective address), esta instrucción carga en un registro una
+   dirección de memoria (virtual o física), como todas las
+   instrucciones que hemos visto es posible especificar cuántos bytes
+   se leerán (=leab, leaw, leaq=). Como analogía =lea= actúa como el
+   operador =&= de C (sólo que =lea= es más general).
+
+   #+BEGIN_SRC asm
+             movq 8(%rdx), %rax      # rax = *(rdx + 1) = 25
+             leaq 8(%rdx), %rax      # rax = rdx + 1    = #1032
+             movl (%rsi, %rcx, 4), %eax  # rax = rsi[rcx]    = 400
+             leaq (%rsi, %rcx, 4), %reax # rax = &(rsi[rcx]) = #2056
+   #+END_SRC
+
+** Teoría
+*** Arreglos
+    Para poder declarar un arreglo (en la forma típica =a[i]=) es
+    necesario manipular tres objetos: *dirección base*, *índice* y
+    *tamaño de elemento*. La dirección base es la dirección de memora
+    donde inicia el arreglo (=a[0]=), el índice hace referencia al
+    i-ésimo elemento del arreglo (=a[i]=), el tamaño de elemento es un
+    número que determina la longitud en bytes de cada uno de los
+    elementos del arreglo, de esta forma para modificar el n-ésimo
+    elemento del arreglo =a= cuyos elementos pesan 4 bytes es necesario
+    calcular la dirección: *base[a] + (indice[n] x tamaño[4])*.
+
+    #+BEGIN_SRC c
+    a[3] = 42;
+    int x = a[3];
+    #+END_SRC
+
+    Se escribe en ensamblador como:
+
+    #+BEGIN_SRC asm
+    movl $3, %rsi
+    movl $42, (%rdi, %rsi, 4)
+    movl (%rdi, %rsi, 4), %rdx
+    #+END_SRC
+
+    Típicamente cuando se itera sobre un arreglo se debe manterer en
+    todo momento la dirección base en un registro y el índice en otro
+    para evitar confusiones.
+
+*** Enlazamiento de archivos
+
+    Cuando usamos el compilador gcc y deseamos modularizar nuestros
+    programas es necesario indicarle al ensamblador el nombre de las
+    funciones que desamos sean vistas por otros archivos, esta
+    característica se especifica con la directiva *.global*:
+
+    #+BEGIN_SRC asm
+      .global funcion
+      .text
+      funcion:
+              enter $0, $0
+              mov $2, %rax
+              mov $0, %rdx
+              mul %rdi
+              ret
+    #+END_SRC
+
+    
+** Introducción a C
+** Ejercicios
+   
