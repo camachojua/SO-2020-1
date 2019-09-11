@@ -90,6 +90,7 @@
               ret
     #+END_SRC
 
+En este punto *funcion* puede ser utilizada por un archivo externo
     
 ** Introducción a C
 ** Ejercicios
