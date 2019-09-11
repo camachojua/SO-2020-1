@@ -90,7 +90,20 @@
               ret
     #+END_SRC
 
-En este punto *funcion* puede ser utilizada por un archivo externo
+En este punto *funcion* puede ser utilizada por un archivo externo de
+la siguiente forma:
+
+#+BEGIN_SRC asm
+          .global _start
+          .text
+  _start:
+          mov $8, %rdi
+          call funcion
+
+          mov $60, %rdi
+          mov %rax, %rsi
+          syscall
+#+END_SRC
     
 ** Introducción a C
 ** Ejercicios
