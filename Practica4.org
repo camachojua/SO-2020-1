@@ -94,6 +94,7 @@ En este punto *funcion* puede ser utilizada por un archivo externo de
 la siguiente forma:
 
 #+BEGIN_SRC asm
+extern funcion
           .global _start
           .text
   _start:
@@ -104,7 +105,46 @@ la siguiente forma:
           mov %rax, %rsi
           syscall
 #+END_SRC
+
+La directiva =extern= no es necesaria cuando se utiliza el ensamblador
+de GNU. Para ver la interacción de estos programas se deben ensamblar
+y ligar:
+
+#+BEGIN_SRC sh
+gcc -c llamadaExterna.s funcionSolitaria.s
+ld llamadaExterna.o funcionSolitaria.o
+./a.out
+#+END_SRC
+
+Obtenemos el estado de salida del programa con =$?= y, como es de esperar,
+el programa regresa =16=.
     
 ** Introducción a C
+
+Cuando el mundo del cómputo era un caos y las máquinas procedían de
+linajes tan ricos y variados como la cantidad de criaturas que habitan
+el planeta los programadores tenían que especializarse en una
+arquitectura en específico, quedando a merced del diseñador de
+hardware. Esto cambio cuando en 1970, Brian Kernighan, Dennis Ritchie
+y Ken Thompson se pusieron de acuerdo en los laboratorios Bell para
+extender el lenguaje de programación B con el fin de obtener un
+lenguaje de programación simple y sencillo con la mera intención de
+escribir utilerias que pudieran ser portables entre las distintas
+arquitecturas de cómputo.
+
 ** Ejercicios
+
+1. Clonar el repositorio.
+2. Crear una rama para resolver este issue.
+3. Toma el programa que imprime los números de Carmichael y divídelo
+   en varios archivos, de tal manera que el archivo principal sólo
+   tenga la llamada al sistema exit de manera explícita. Todas las
+   funciones auxiliares deberán estar dispersas en su propio archivo,
+   por ejemplo, si hago uso de dos funciones =gcd= y =carmichael=
+   deberé tener 3 archivos:
+#+BEGIN_SRC sh
+gcd.s charmicael.s main.s
+#+END_SRC
+4. Reescribe tu programa con ensamblador en línea para C.
+5. En el texto del pull-request indiquen qué hace cada archivo.
    
