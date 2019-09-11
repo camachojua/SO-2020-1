@@ -132,6 +132,23 @@ lenguaje de programación simple y sencillo con la mera intención de
 escribir utilerias que pudieran ser portables entre las distintas
 arquitecturas de cómputo.
 
+Dejando a un lado la historia podemos utilizar C como un envoltorio de
+ensamblador, sí, es posible usar ensamblador desde C ¡Toma eso
+javascript!. Para ejecutar una instrucción de ensamlbador se debe
+insertar *código en línea*, todo código en línea tiene el formato
+=asm("instruccion");=, donde =instruccion= es una instruccion válida
+de ensamblador. Todos los programas en C deben poseer la terminación
+=.c= y deberán sen compilados con =gcc=
+
+#+BEGIN_SRC c
+  void main()
+  {
+    asm("mov $60, %rax");
+    asm("mov $42, %rdi");
+    asm("syscall");
+  }
+#+END_SRC
+
 ** Ejercicios
 
 1. Clonar el repositorio.
@@ -145,6 +162,7 @@ arquitecturas de cómputo.
 #+BEGIN_SRC sh
 gcd.s charmicael.s main.s
 #+END_SRC
-4. Reescribe tu programa con ensamblador en línea para C.
+4. Reescribe tu programa de la práctica 3 con ensamblador en línea
+   para C.
 5. En el texto del pull-request indiquen qué hace cada archivo.
    
