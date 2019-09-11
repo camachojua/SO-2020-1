@@ -149,6 +149,10 @@ de ensamblador. Todos los programas en C deben poseer la terminación
   }
 #+END_SRC
 
+Al compilar el programa con =gcc programa.c= seguido de =./a.out=
+podemos obtener el valor devuelto a la llamada al sistema =_exit=
+con =echo $?=, y, si todo sale bien podemos leer un =42=.
+
 ** Ejercicios
 
 1. Clonar el repositorio.
