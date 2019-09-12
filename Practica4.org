@@ -1,4 +1,5 @@
 * Práctica 4
+
 ** Recuento de la práctica 3
 
    Antes de realizar cualquier operación es necesario contar con
@@ -83,13 +84,6 @@
       .global funcion
       .text
       funcion:
-              enter $0, $0
-              mov $2, %rax
-              mov $0, %rdx
-              mul %rdi
-              ret
-    #+END_SRC
-Para utilizar 
 
 
 
