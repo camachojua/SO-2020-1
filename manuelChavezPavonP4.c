@@ -1,5 +1,7 @@
 void main()
 {
+	asm(".global _start");
+	asm(".text");
 	asm("_start:");
 	asm("mov $0, %rax");
 	asm("mov $0, %rbx");
@@ -7,7 +9,7 @@ void main()
 	asm("movq $1, %rax");
 	asm("movq $1, %rdi");
 	asm("movq $msg, %rsi");
-	asm("movq $71, % rdx");
+	asm("movq $70, % rdx");
 	asm("syscall");
 	asm("movq $60, %rax");
 	asm("movq $0, %rdi");
