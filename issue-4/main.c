@@ -1,8 +1,8 @@
+//Main para imprimir en pantalla los numeros de Carmichael
 void main()
 {
 	asm(".global _start");
 	asm(".text");
-
 	asm("mov $10, %rax");
 	asm("mov $29, %rbx");
 	asm("salir:");
