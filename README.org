@@ -1,5 +1,5 @@
 * Sistemas Operativos (Laboratorio)
-** Esquema 
+** Esquema
   En el laboratorio introduciremos brevemente algunos
   conceptos teóricos con los que será posible hacer una pequeña
   práctica para aplicar los conocimientos adquiridos.
@@ -24,7 +24,7 @@
   | Práctica de laboratorio | Semanalmente     |
   | Proyecto intermedio     | Septiembre 30    |
   | Proyecto final          | Noviembre 22     |
-  
+
   En principio no hay prórroga sobre las fechas de entrega, aunque
   pueden modificarse de manera personal por motivos bien justificados
   (asuntos personales, laborales o académicos), el entregable
