@@ -292,7 +292,7 @@ hexdump -C floppy.img
 | 000001f0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 55 | aa |   | ..............U. |
 |      200 |   |   |   |   |   |   |   |   |   |   |   |   |   |   |    |    |   |                  |
 
-*** Imprimir un caracter en memoria
+*** Imprimir un caracter en pantalla
 
 En esta sección haremos uso de una interrupción de BIOS para imprimir
 un caracter en la pantalla, en particular utilizaremos la función
