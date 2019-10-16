@@ -524,7 +524,7 @@ Lo que hace este archivo es crear nuestra imagen de arranque para que
 qemu pueda cargar nuestro código. Este código se compila con:
 
 #+BEGIN_SRC sh
-gcc -c -g -Os -march=i686 -ffreestanding -Wall -Werror floppy.c -o floppy.o
+gcc -c -g -Os -march=native -ffreestanding -Wall -Werror floppy.c -o floppy.o
 ld -static -Tfloppy.ld -nostdlib -nmagic -o floppy.elf floppy.o
 objcopy -O binary floppy.elf floppy.bin
 dd if=/dev/zero of=floppy.img bs=512 count=2880
@@ -552,6 +552,33 @@ Utilizamos la directiva =__volatile__= para indicarle al compilador
 que no modifique ese código en ensamblador. Procedemos a compilar el
 programa y a generar el disco de arranque siguiendo las mismas
 instrucciones que se ejecutaron anteriormente.
+
+La ventaja de utilizar C es que podemos crear nuestras propias
+funciones en este lenguaje e interactuar con el código de ensamblador:
+
+#+BEGIN_SRC c
+__asm__(".code16\n");
+__asm__("jmpl $0x0000, $main\n");
+
+void imprimeCadena(const char *cadena)
+{
+  while(*cadena) {
+    __asm__ __volatile__("int $0x10" : : "a"(0x0e00 | *cadena), "b"(0x0007));
+    ++cadena;
+  }
+}
+
+void main()
+{
+  imprimeCadena("Hola mundo");
+}
+#+END_SRC
+
+La funcion =imprimeCadena()= recibe como argumento un apuntador a una
+cadena, añade al registro =%ah= el valor =0x0e00= (función de
+impresión de caracter) y el valor de la cade al registro =%al=, la
+interrupción utilizada es =0x10=. Este programa debe ser compilado con
+las mismas instrucciones que ejecutamos anteriormente.
 
 ** Fecha de entrega
 
