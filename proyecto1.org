@@ -1,0 +1,582 @@
+* Proyecto 1
+
+** Objetivo
+
+Escribir un cargador de arranque capaz de ejecutar un comando
+personalizado y poder escribir en pantalla lo que se ingresa a través
+del teclado.
+
+** Requisitos
+
+Para poder realizar este proyecto es necesario tener instalado los
+siguientes programas:
+
++ Virtualizador: =qemu=.
++ Compilador: =gcc=.
++ Ensamblador: =as= (incluido en =gcc=).
++ Enlazador: =ld= (incluido en =gcc=).
+
+** Teoría
+
+*** ¿Cómo inicia un sistema?
+
+Después de que el usuario presiona el botón de encendido de una
+computadora la tarjeta madre envía una señal eléctrica al CPU, este
+último al recibir una señal eléctrica comienza a ejecutar su ciclo
+_fetch_, _decode_ y _execute_, en particular la instrucción que
+_fetch_ obtiene es la dirección de memoria del programa =POST= (Power
+On Self Test). Este programa es responsable de inicializar todos los
+periféricos, calcular la cantidad disponible de memoria y buscar una
+imagen de un sistema operativo.
+
+#+BEGIN_SRC plantuml :file img/proceso.png
+digraph post {
+node [style=rounded]
+UEFI [shape=box]
+
+HDD [
+shape=plaintext
+label=<
+<table border='1' cellborder='1'>
+<tr><td colspan="4">Unidad de almacenamiento</td></tr>
+<tr><td port='port_one'>Sector 0</td><td port='port_two'>Sector 1</td><td port='port_three'>Sector 2</td><td port='port_four'>...</td></tr>
+</table>
+>];
+
+RAM [shape=record, label = "{RAM | 0x7C00 | | | }"]
+MBR [shape=record, label = "MBR | Tabla de particiones | 0x55AA"]
+UEFI -> HDD [label=" El UEFI busca en el primer sector"]
+HDD:port_one -> MBR
+HDD -> RAM [label= " El MBR apunta a la dirección 0000:7C00"]
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:img/proceso.png]]
+
+El proceso seguido por el programa =POST= es el siguiente:
+
+1. El BIOS lista todos los dispositivos de almacenamiento.
+2. Para cada dispositivo de almacenamiento:
+   1. Buscar en el primer sector (=0=).
+   2. Leer los últimos 512 bytes de ese sector.
+   3. Verificar que últimos dos bytes del sector contengan un número
+      mágico =0xAA55= que indica la prescencia de un MBR.
+   4. Dentro de los primeros 510 bytes se encuentra el *Master Boot
+      Record* (MBR) y la tabla de particiones del dispositivo.
+3. El control de la ejecución es pasado a la dirección de memoria
+   almacenada en la primer entrada del MBR (=0000:7C00=).
+4. En este momento el BIOS delega el control a otro programa llamado
+   =cargador de arranque=, el cual se encarga de encontrar una imagen
+   de kernel y montarla en memoria.
+5. El cargador de arranque delega la ejecución al kernel.
+6. El kernel inicia su ejecución y se encarga de cargar el sistema
+   operativo.
+
+Para que este proceso pueda prosperar es necesario saber cómo
+programar un cargador de arranque el cual va a hacer uso de las
+*funciones que el BIOS* pone a nuestra disposición. Un punto muy
+importante es que al momento de arranque *el CPU inicia en modo [[https://en.wikipedia.org/wiki/Real_mode][real]]*
+por lo que el modelo de programación aprendido no estará disponible
+(instrucciones =call=, =return=, etc.) y no existe la interfaz de
+aplicación binaria (ABI).
+
+*** Registros en modo real
+
+En modo real los registros de propósito general tienen la
+responsabidilad de almacenar cierta información del programa en un
+contexto específico, existen cuatro tipos de registros:
+
+- Registros de propósito general.
+- Registros de segmento.
+- Registros de pila.
+- Registros de índice.
+
+*** Registros de Propósito general
+
+Utilizados para almacenar información de manera temporal, cada uno de
+estos registros tiene 16 bits de longitud (2 bytes):
+
+- =ax= Registro acumulador.
+- =bx= Registro de dirección base.
+- =cx= Registro contador.
+- =dx= Registro de datos.
+
+*** Registros de Segmento
+
+La representación de un programa en memoria utiliza el concepto de
+segmento (segment) y desplazamiento (offset). El segmento describe la
+dirección de inicio de un bloque de memoria mientras que el
+desplazamiento es la distancia entre el segmento y la dirección actual.
+
+Si tomamos un byte en memoria que tiene un valor =val= y se encuentra
+presente a diez bytes de un bloque de memoria cuya dirección de inicio
+es =0x7c00= se representará a dicho byte con el segmento =0x7c00= y el
+desplazamiento =0x0A= (10 en hexadecimal). De esta forma la *dirección
+absoluta* del byte sería =0x7c00 + 0x000A=. En el modo real existen
+cuatro tipos de segmentos utilizados para calcular direcciones:
+
+- =cs= Segmento de código.
+- =ss= Segmento de pila.
+- =ds= Segmento de datos.
+- =es= Segmento extendido.
+
+*Existe una limitante al guardar valores en estos registros*: _NO_ es
+posible asignar una dirección a estos registros de manera directa
+(=mov $0x2A, %cs=), lo que _SÍ_ se debe hacer es copiar la dirección
+temporalmente en un registro de propósito general y después copiar ese
+valor a un registro de segmento. Siguiendo con el ejemplo anterior
+para calcular la dirección absoluta del byte en memoria tendríamos que
+realizar las siguientes operaciones:
+
+#+BEGIN_SRC asm
+mov $0x07c0, %ax
+mov %ax, %ds
+mov (0x0A), %ax
+#+END_SRC
+
+En este caso se guarda el valor =0x7c00 * 16= (16 = 2 bytes) en el
+registro =ax=, después se copia ese valor en el segmento de datos =ds=
+por último se hace un cálculo de desplazamiento de diez bytes
+(respecto al segmento de datos) para después guardar el valor =val=
+(correspondiente a esa dirección absoluta de ese byte) en el registro
+=ax=.
+
+*** Registros de Pila
+
+Estos registros nos sirven para acceder al tope y base de la pila del
+programa:
+
+- =bp= Apuntador a la base de la pila.
+- =sp= Apuntador al tope de la pila.
+
+*** Registros de Índice
+
+Lor registros índices son utilizados para hacer cálculos de
+direccionamiento de memoria, dependiendo el segmento de datos se debe
+utilizar un registro de desplazamiento específico:
+
+- =si= Índice origen.
+- =di= Índice destino.
+- =ax= El CPU lo utiliza para cálculos aritméticos.
+- =bx= Almacena la dirección de una función o variable (=si=, =di= y
+  =bp=). Realiza cálculos aritméticos.
+- =cx= Sirve como contador para uso en ciclos.
+- =dx= Almacena los 16 bits altos de una multiplicación/división.
+- =cs= Almacena la dirección base del segmento de texto.
+- =ss= Almacena la dirección base de la pila.
+- =ds= Almacena la dirección base de las variables globales.
+- =es= Almacena la dirección base por defecto de las variables
+  dinámicas (declaradas a lo largo de la ejecución del programa).
+- =bp= Almacena un desplazamiento del segmento de pila (usado por
+  funciones que se pasan por la pila).
+- =sp= Almacena el desplazamiento que apunta al tope de la pila.
+- =si= Utilizado por instrucciones de cadenas, la dirección base de la
+  cadena se almacena aquí.
+- =di= Utilizado como apuntador destino por instrucciones de
+  manipulación de cadenas.
+
+*** Interrupciones de BIOS
+
+El BIOS es un programa que provee una interfaz de programación
+rudimentaria la cual permite interactuar con los periféricos del
+sistema, dichas interacciones se llevan a cabo mediante
+*interrupciones* las cuales poseen la siguiente sintáxis:
+
+#+BEGIN_SRC asm
+int [numero]
+#+END_SRC
+
+Donde =numero= es el número de interrupción de BIOS que deseamos
+ejecutar, así como las funciones, las interrupciones contien un
+conjunto de funciones asociadas a ellas y necesitan un conjunto de
+argumentos para poder ejecutarse de manera exitosa, dichos argumentos
+deberán ser establecidos de acuerdo a la siguiente convención:
+
+1. El registro =ah= contendrá el número de función específica dentro
+   de la interrupción a ejecutar.
+2. Dependiendo de la función se deberá insertar en otro registro los
+   argumentos de la función a ejecutar.
+3. Ejecutar la instrucción =int numero= para realizar la interrupción.
+
+Como ejemplo se pondrá la interrupción =0x10= (servicios de vídeo)
+interactuando con la función =0x00= encargada de cambiar el modo de
+vídeo y limpiar la pantalla:
+
+#+BEGIN_SRC asm
+          .globl _start
+          .code16        # Genera codigo en modo real
+          .text           # Inicia seccion de texto
+  _start:
+          mov $0x02, %al
+          mov $0x00, %ah
+          int 0x10
+#+END_SRC
+
+La primer línea establece el modo de vídeo (texto de 80 columnas con
+25 líneas), la segunda indica que vamos a cambiar el modo de vídeo y
+la última ejecuta la interrupción de gráficos.
+
+Dentro de la interrupción =0x10= tenemos las siguientes funciones:
+
+- =0x00=. Cambia el modo de vídeo y limpia la pantalla.
+- =0x01=. Establece el tipo de cursor.
+- =0x13=. Imprime una cadena en pantalla.
+
+Algunas funciones de las interrupciones puede ser encontrada [[https://en.wikipedia.org/wiki/BIOS_interrupt_call][aquí]]. La
+descripción completa de las interrupciones, sus funciones y el orden
+de los parámetros puede ser consultada [[ftp://ftp.embeddedarm.com/old/saved-downloads-manuals/EBIOS-UM.PDF][aquí]].
+
+** Generación del cargador de arranque
+
+Cuando el CPU inicia en modo real (16 bits) lo único que podemos hacer
+como programadores es utilizar las funciones que el BIOS nos da, por
+este motivo esta sección nos llevará de la mano para crear un cargador
+de arranque que busque una imagen de sistema y delegue la ejecución al
+kernel encontrado en alguna unidad de almacenamiento. Comenzaremos
+creando un medio de almacenamiento con el número mágico =0x55AA= en
+los últimos dos bytes de su primer sector:
+
+#+BEGIN_SRC asm
+          .code16
+          .globl _start
+          .text
+  _start:                         # Punto de entrada
+          . = _start + 510        # Nos movemos al byte 510 desde el inicio
+          .byte 0x55              # Agregamos el primer byte magico (byte 511)
+          .byte 0xaa              # Agregamos el segundo byte magico (byte 512)
+#+END_SRC
+
+Para compilar el programa guardamos el código anterior como =floppy.s=
+y ejecutamos los siguientes comandos:
+
+#+BEGIN_SRC sh
+as floppy.s -o floppy.o
+ld -Ttext 0x7c00 --oformat=binary floppy.o -o floppy.bin
+#+END_SRC
+
+La bandera =-Ttext= indica la dirección de memoria del segmento de
+texto. Ya que tenemos el binario de nuestro *disco de arranque* es
+necesario pasarlo a un formato que pueda ser leído por la BIOS y ser
+reconocido como tal:
+
+#+BEGIN_SRC sh
+dd if=/dev/zero of=floppy.img bs=512 count=2880
+dd if=floppy.bin of=floppy.img
+#+END_SRC
+
+Primero creamos un disco de =1.4= mb y después copiamos el contenido
+de nuestro ejecutable a dicho disco. Para ejecutar nuestro cargador de
+arranque utilizaremos =qemu=:
+
+#+BEGIN_SRC sh
+qemu-system-x86_64 -fda floppy.img
+#+END_SRC
+
+Esto ejecutará =qemu= e interpretará nuestro cargador de arranque,
+desafortunadamente nuestro cargador no hace nada más que ser
+reconocido por el BIOS.
+
+[[./img/floppy.png]]
+
+La firma de arranque se puede ver al obtener la información en
+hexadecimal del archivo =floppy.img=:
+
+#+BEGIN_SRC sh
+hexdump -C floppy.img
+#+END_SRC
+
+#+RESULTS:
+|        0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |  0 |  0 |   | ................ |
+|        * |   |   |   |   |   |   |   |   |   |   |   |   |   |   |    |    |   |                  |
+| 000001f0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 55 | aa |   | ..............U. |
+|      200 |   |   |   |   |   |   |   |   |   |   |   |   |   |   |    |    |   |                  |
+
+*** Imprimir un caracter en memoria
+
+En esta sección haremos uso de una interrupción de BIOS para imprimir
+un caracter en la pantalla, en particular utilizaremos la función
+=0x0e= para imprimir un caracter, dicha función espera el caracter a
+imprimir en el registro =al=:
+
+#+BEGIN_SRC asm
+          .code16
+          .globl _start
+          .text
+  _start:
+          mov $'W', %al   # caracter a imprimir
+          mov $0x0e, %ah  # Codigo de servicio para imprimir caracter y avanzar el cursor
+          int $0x10       # Interrupcion de video
+
+          . = _start + 510
+          .byte 0x55
+          .byte 0xaa
+#+END_SRC
+
+Procedemos a generar la imagen de disco como lo hicimos anteriormente:
+
+#+BEGIN_SRC sh
+as floppy2.s -o floppy2.o
+ld -Ttext 0x7c00 --oformat=binary floppy2.o -o floppy2.bin
+dd if=/dev/zero of=floppy2.img bs=512 count=2880
+dd if=floppy2.bin of=floppy2.img
+qemu-system-x86_64 -fda floppy2.img
+#+END_SRC
+
+*** Imprimir un =hola mundo=
+
+Siguiendo con el conjunto de ejemplos vámos a seguir explotando la
+función =0x0e= de la interrupción de servicios de vídeo, en este caso
+se imprimirá letra por letra el mensaje =Hola, que hace?=:
+
+#+BEGIN_SRC asm
+
+          .code16
+          .globl _start
+          .text
+  _start:
+          mov $'H', %al
+          mov $0x0e, %ah
+          int $0x10
+
+          mov $'o', %al
+          mov $0x0e, %ah
+          int $0x10
+
+          mov $'l', %al
+          mov $0x0e, %ah
+          int $0x10
+
+          mov $'a', %al
+          mov $0x0e, %ah
+          int $0x10
+
+          mov $',', %al
+          mov $0x0e, %ah
+          int $0x10
+
+          mov $' ', %al
+          mov $0x0e, %ah
+          int $0x10
+
+          mov $'q', %al
+          mov $0x0e, %ah
+          int $0x10
+
+          mov $'u', %al
+          mov $0x0e, %ah
+          int $0x10
+
+          mov $'e', %al
+          mov $0x0e, %ah
+          int $0x10
+
+          mov $'h', %al
+          mov $0x0e, %ah
+          int $0x10
+
+          mov $'a', %al
+          mov $0x0e, %ah
+          int $0x10
+
+          mov $'c', %al
+          mov $0x0e, %ah
+          int $0x10
+
+          mov $'e', %al
+          mov $0x0e, %ah
+          int $0x10
+
+          mov $'?', %al
+          mov $0x0e, %ah
+          int $0x10
+
+          . = _start + 510
+          .byte 0x55
+          .byte 0xaa
+#+END_SRC
+
+Procedemos a guardar este código con el nombre =floppy3.s= y
+ejecutamos lo siguiente:
+
+#+BEGIN_SRC sh
+as floppy3.s -o floppy3.o
+ld -Ttext 0x7c00 --oformat=binary floppy3.o -o floppy3.bin
+dd if=/dev/zero of=floppy3.img bs=512 count=2880
+dd if=floppy3.bin of=floppy3.img
+qemu-system-x86_64 -fda floppy3.img
+#+END_SRC
+
+Si todo fue ejecutado de manera correcta deberán ver el siguiente mensaje:
+
+[[https://raw.githubusercontent.com/camachojua/SO-2020-1/master/img/floppy3.png]]
+
+Obviamente insertar cadenas de esta forma se vuelve súper tedioso, por
+esta razón debemos hacer uso de funciones que nos permitan trabajar
+con cadenas de manera más eficiente. Comenzaremos describiendo la
+instrucción =lods= (cuya documentación puede ser consultada [[http://qcd.phys.cmu.edu/QCDcluster/intel/vtune/reference/vc161.htm][aquí]]),
+dicha instrucción *no necesita argumentos* y lo que hace es cargar el
+valor almacenado en una dirección de memoria en el registro =%al= o
+=%ax= (dependiendo de la cantidad de información a copiar), la
+dirección de memoria se encuentra almacenada en los registros
+=%ds:%si=, después de que se ha cargado el valor de la memoria el
+registro =%si= incrementa o decrementa su valor de a cuerdo al tamaño
+del operando (1 byte para direcciones de 1 byte, 2 bytes para las de
+dos, ...). La segunda instrucción es =lea= cuyo objetivo es calcular
+la dirección de memoria de un elemento dentro de un arreglo (su
+descripción oficial se encuentra [[https://www.aldeid.com/wiki/X86-assembly/Instructions/lea][aquí]]) y cargarla en un registro
+particular:
+
+#+BEGIN_SRC asm
+
+          .code16
+          .text
+          .globl _start;
+  _start:
+          jmp _boot                             # Saltamos al código del cargador de arranque
+          welcome: .asciz "Hola, que hace\n\r"  # Definimos la cadena a escribir
+
+          .macro imprimeCadena str               # macro que llama a una funcion para imprimir una cadena
+              leaw  \str, %si
+              call pintaCadena
+          .endm
+
+  pintaCadena:
+          lodsb
+          orb  %al, %al
+          jz   salir
+          movb $0x0e, %ah
+          int  $0x10
+          jmp  pintaCadena
+  salir:
+          ret
+
+  _boot:
+       mWriteString welcome
+
+       #move to 510th byte from the start and append boot signature
+       . = _start + 510
+       .byte 0x55
+       .byte 0xaa
+
+#+END_SRC
+
+A continuación ejecutamos los comandos para ensamblar y generar el
+disco de arranque:
+
+#+BEGIN_SRC sh
+as floppy4.s -o floppy4.o
+ld -Ttext 0x7c00 --oformat=binary floppy4.o -o floppy4.bin
+dd if=/dev/zero of=floppy4.img bs=512 count=2880
+dd if=floppy4.bin of=floppy4.img
+qemu-system-x86_64 -fda floppy4.img
+#+END_SRC
+
+Si todo sale bien deberás ver una imagen similar a esta:
+
+[[https://raw.githubusercontent.com/camachojua/SO-2020-1/master/img/floppy4.png]]
+
+*** Escribir el código en C
+
+Salvo que seamos unos prodigios en la programación el uso de
+ensamblador se vuelve tedioso para los humanos, por esta razón se
+inventaron lenguajes de programación de alto nivel como C, utilizando
+esto a nuestro favor podemos escribir nuestro código de cargador de
+arranque utilizando este lenguaje. Como primer paso se hará uso de
+*código de ensamblador en línea*:
+
+#+BEGIN_SRC c
+  __asm__(".code16\n");
+  __asm__("jmpl $0x0000, $main\n");
+
+  void main()
+  {
+
+  }
+#+END_SRC
+
+Este archivo hace uso de la macro =__asm__= para utilizar código en
+ensamblador dentro de C, la segunda llamada a la macro realiza un
+salto incondicional a la dirección de memoria donde se encuentra la
+función =main()=. Guardaremos este archivo como =floppy.c=, si
+tratamos de compilar este código fallará ya que el cálculo de las
+funciones =_start= y =main= no están explícitamente declarados, para
+ello crearemos un archivo llamado =floppy.ld= con el siguiente
+contenido:
+
+#+BEGIN_SRC c
+  ENTRY(main)
+  SECTIONS
+  {
+    . = 0x7c00;
+   .text : AT(0x7c00)
+      {
+        *(.text);
+      }
+   .sig : AT(0x7dfe)
+      {
+        SHORT(0xaa55);
+      }
+  }
+#+END_SRC
+
+Lo que hace este archivo es crear nuestra imagen de arranque para que
+qemu pueda cargar nuestro código. Este código se compila con:
+
+#+BEGIN_SRC sh
+gcc -c -g -Os -march=i686 -ffreestanding -Wall -Werror floppy.c -o floppy.o
+ld -static -Tfloppy.ld -nostdlib -nmagic -o floppy.elf floppy.o
+objcopy -O binary floppy.elf floppy.bin
+dd if=/dev/zero of=floppy.img bs=512 count=2880
+dd if=floppy.bin of=floppy.img
+qemu-system-x86_64 -fda floppy.img
+#+END_SRC
+
+Esto arrancará un sistema que no hace nada, para cambiar ese
+comportamiento añadiremos un par de instrucciones dentro de la función
+=main()=:
+
+#+BEGIN_SRC c
+  __asm__(".code16\n");
+  __asm__("jmpl $0x0000, $main\n");
+
+  void main()
+  {
+    __asm__ __volatile__ ("mov $'X'  , %al\n");
+    __asm__ __volatile__ ("mov $0x0e, %ah\n");
+    __asm__ __volatile__ ("int $0x10\n");
+  }
+#+END_SRC
+
+Utilizamos la directiva =__volatile__= para indicarle al compilador
+que no modifique ese código en ensamblador. Procedemos a compilar el
+programa y a generar el disco de arranque siguiendo las mismas
+instrucciones que se ejecutaron anteriormente.
+
+** Fecha de entrega
+
+*29 de Octubre de 2019*
+
+** Ejercicios
+
+1. Describir el procedimiento =POST= que siguien las computadoras al
+   momento de presionar el botón de encendido.
+2. Utilizando el archivo [[https://github.com/camachojua/SO-2020-1/blob/master/cargador.s][=cargador.s=]] como guía generar un cargador de
+   arranque capaz de escribir en pantalla las teclas que presiona en
+   usuario, es decir, si el usuario escribe =esta es una prueba= esa
+   misma cadena se deberá mostrar en la pantalla:
+
+#+BEGIN_SRC sh
+> Esta es una prueba
+Esta es una prueba
+#+END_SRC
+
+3. Aprovechando la capacidad de hacer =echo=, implementar una terminal
+   de línea de comandos básica que ejecute _un solo comando_ de tal
+   manera que al dar enter después del nombre de comando imprima
+   alguna cosa en la terminal.
+
+#+BEGIN_SRC sh
+> miSuperComando
+Hola, mundo!!!
+#+END_SRC
