@@ -452,7 +452,7 @@ particular:
           ret
 
   _boot:
-       mWriteString welcome
+       imprimeCadena welcome
 
        #move to 510th byte from the start and append boot signature
        . = _start + 510
