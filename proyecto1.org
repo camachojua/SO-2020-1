@@ -524,8 +524,8 @@ Lo que hace este archivo es crear nuestra imagen de arranque para que
 qemu pueda cargar nuestro código. Este código se compila con:
 
 #+BEGIN_SRC sh
-gcc -c -g -Os -march=native -ffreestanding -Wall -Werror floppy.c -o floppy.o
-ld -static -Tfloppy.ld -nostdlib -nmagic -o floppy.elf floppy.o
+gcc -c -g -Os -m16 -march=i686 -ffreestanding -Wall -Werror floppy.c -o floppy.o
+ld -melf_i386 -static -Tfloppy.ld -nostdlib --nmagic -o floppy.elf floppy.o
 objcopy -O binary floppy.elf floppy.bin
 dd if=/dev/zero of=floppy.img bs=512 count=2880
 dd if=floppy.bin of=floppy.img
