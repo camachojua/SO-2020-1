@@ -675,7 +675,26 @@ operandos involucrados en cada una de las operaciones antes señaladas:
 **** Prefijos de repetición
 
 Los prefijos de repetición son utilizados *antes* de una instrucción
-de manipulación de cadena.
+de manipulación de cadena. El número de repeticiones está determinado
+por el tipo de prefijo y el valor del registro contador (=%cx=), el
+prefijo de repetición más básico es =rep= y funciona ejecutando la
+instrucción a repetir, decrementando el valor de =%cx= en uno y
+revisando si el valor de =%cx= se ha vuelto cero, de otra manera se
+volverá a ejecutar la instrucción anterior hasta que =%cx= sea cero.
+
+Existen las siguientes variaciones del prefijo de instrucción:
+
++ =rep= :: Repetición incondicional. Repite la operación hasta que el
+           registro =%cx= sea cero.
++ =repe= o =repz= :: Repetición condicional. Repite la operación
+     *mientras* la bandera cero (=ZF=) se encuentre en cero. La
+     operación se ditiene cuando la bandera =ZF= sea distinta de cero
+     o cuando el registro =%cx= sea cero.
++ =repne= o =repnz= :: Repetición condicional. Repite la operación
+     *mientras* la bandera cero (=ZF=) sea distinta de cero. La
+     operación se detiene cuando =ZF= sea cero o cuando =%cx= sea
+     cero.
+
 
 ** Fecha de entrega
 
