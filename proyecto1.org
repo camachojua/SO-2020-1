@@ -52,7 +52,8 @@ HDD -> RAM [label= " El MBR apunta a la dirección 0000:7C00"]
 #+END_SRC
 
 #+RESULTS:
-[[[[file:img/proceso.png]]]]
+[[https://raw.githubusercontent.com/camachojua/SO-2020-1/master/img/proceso.png]]
+
 
 El proceso seguido por el programa =POST= es el siguiente:
 
