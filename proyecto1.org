@@ -664,13 +664,13 @@ operación mientras que el registro =%es:%di= apunta al operando
 destino de la misma operación. La siguiente tabla muestra los
 operandos involucrados en cada una de las operaciones antes señaladas:
 
-| Instrución | Origen, destino  |
-|------------+------------------|
-| movs       | %ds:%si, %es:%di |
-| lods       | %ds:%si, %ax     |
-| stos       | %ax, %es:%di     |
-| cmps       | %es:%di, %ds:%si |
-| scas       | %ax, %es:%di     |
+| Instrución | Origen, destino      |
+|------------+----------------------|
+| movs       | =%ds:%si=, =%es:%di= |
+| lods       | %ds:%si, %ax         |
+| stos       | %ax, %es:%di         |
+| cmps       | %es:%di, %ds:%si     |
+| scas       | %ax, %es:%di         |
 
 **** Prefijos de repetición
 
