@@ -292,6 +292,7 @@ hexdump -C floppy.img
 | 000001f0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 55 | aa |   | ..............U. |
 |      200 |   |   |   |   |   |   |   |   |   |   |   |   |   |   |    |    |   |                  |
 
+
 *** Imprimir un caracter en pantalla
 
 En esta sección haremos uso de una interrupción de BIOS para imprimir
@@ -579,6 +580,57 @@ cadena, añade al registro =%ah= el valor =0x0e00= (función de
 impresión de caracter) y el valor de la cade al registro =%al=, la
 interrupción utilizada es =0x10=. Este programa debe ser compilado con
 las mismas instrucciones que ejecutamos anteriormente.
+
+*** VGA
+*** Manipulación de cadenas
+
+Hasta el momento hemos estado trabajando con cadenas de longitud fija,
+en esta sección aprenderemos cómo hacer uso de cadenas de longitud
+variable, como su nombre lo indica este tipo de cadenas pueden
+contener tantos caracteres como lo necesiten ¿Cómo se especifica la
+cantidad de caracteres de una cadena de longitud variable? Existen dos
+métodos:
+
+1. Establecer explícitamente la longitud de la cadena.
+2. Utilizar un caracter de fin de cadena.
+
+C utiliza el segundo método, el caracter de fin de cadena es el
+caracter nulo (=\0=). En ensamblador podemos utilizar los dos métodos
+aunque el más utilizado es el primero, el cálculo de longitud de
+cadena se lo dejamos al ensamblador haciendo uso del contador de
+longitud =$=:
+
+#+BEGIN_SRC asm
+cadena db 'Hola, mundo!', 0xa   ; Declaramos la cadena
+longitud equ $ - cadena         ; Esperamos que el ensamblador calcule su longitud
+#+END_SRC
+
+El contador de longitud =$= apunta al primer byte /después/ del último
+caracter de la variable =cadena=, por lo tanto la diferencia de
+direcciónes =$- cadena= regresa la longitud de la cadena en
+bytes. Como una cadena es un conjunto de caracteres y cada caracter
+(ascii) pesa un byte podemos utilizar ese valor para calcular la
+longitud de la cadena. Este método sólo funciona para cadenas ascii,
+en otras codificaciones (UTF-8, unicode, etc) cada carcter pesa más de
+un byte. Para indicar la longitud de cadena de manera explícita
+podemon poner:
+
+#+BEGIN_SRC asm
+msg db 'Hola, mundo', 0xa
+len equ 12
+#+END_SRC
+
+De manera alternativa es posible indicar el caracter de termino de
+cadena (guarda), esta guarda debe ser especial de modo que no sea un
+caracter imprimible:
+
+#+BEGIN_SRC asm
+  cadena db 'Texto', 0
+#+END_SRC
+
+**** Instrucciones de cadena
+
+
 
 ** Fecha de entrega
 
