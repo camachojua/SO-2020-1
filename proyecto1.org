@@ -582,6 +582,25 @@ interrupción utilizada es =0x10=. Este programa debe ser compilado con
 las mismas instrucciones que ejecutamos anteriormente.
 
 *** VGA
+
+Uno de los métodos más utilizados pra mostrar gráficos es utilizar el
+estándar de Video Graphics Adapter (VGA) que posee varios modos de
+vídeo: desde 2 colores a 256 y resoluciones desde 320x200 hasta
+640x480. El modo de color es conocido como modo =0x13=.
+
+**** Modo =0x13=
+
+En este modo de vídeo las dimensiones de la patalla son 320 pixeles de
+ancho por 200 pixeles de alto. Esto genera una matriz de 320 elementos
+en el eje $x$ y 200 en el eje $y$, el origen $(0,0)$ se encuentra en
+la esquina superior izquierda como lo muestra la figura de abajo, cada
+pixel es representado por 8 bits ($2^8=256$) o un byte, de esta forma
+la memoria necesaria para escribir en la pantalla es de 300x200 bytes o
+64,000 bytes.
+
+[[https://raw.githubusercontent.com/camachojua/SO-2020-1/master/img/vga.gif]]
+
+
 *** Manipulación de cadenas
 
 Hasta el momento hemos estado trabajando con cadenas de longitud fija,
