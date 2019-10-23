@@ -600,6 +600,47 @@ la memoria necesaria para escribir en la pantalla es de 300x200 bytes o
 
 [[https://raw.githubusercontent.com/camachojua/SO-2020-1/master/img/vga.gif]]
 
+Para establecer el modo de vídeo es necesario hacer uso de la
+interrupción =0x10= (servicios de vídeo) utilizando la función =0x00=,
+en el registro =%al= insertamos el modo de vídeo deseado. Así pues,
+para establecer el modo de vídeo a color con una resolución de 320x200
+debemos ejecutar las siguientes instrucciones:
+
+#+BEGIN_SRC asm
+mov $0x13, %al
+mov $0x00, %ah
+int 0x10
+#+END_SRC
+
+Para regresar al modo texto simplemente utilizamos la función =0x03=
+de la interrupción =0x10=:
+
+#+BEGIN_SRC asm
+mov $0x03, %al
+mov $0x00, %ah
+int 0x10
+#+END_SRC
+
+**** Dibujando un pixel
+
+Una manera fácil de dibujar un pixel es utilizar la función =0x0c= de
+la interrupción =0x10=. Esta función utiliza los registros =%cx= y
+=%dx= como las coordenadas =(x,y)= del pixel, el color mostrado
+depende del valor que posea el registro =%al=:
+
+#+BEGIN_SRC asm
+mov $0x02, %al
+mov $0x0c, %ah
+mov $159, %cx
+mov $99, %dx
+int 0x10
+#+END_SRC
+
+Esta forma de dibujar es muy sencilla, sin embargo es ineficiente
+debido a que el bios realiza un conjunto de revisiones para validar
+las entradas y después hace un cálculo para determinar el
+desplazamiento de la dirección de inicio del buffer de vídeo. Una
+manera más rápida es escribir directamente en la memoria de vídeo.
 
 *** Manipulación de cadenas
 
