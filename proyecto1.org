@@ -630,7 +630,29 @@ caracter imprimible:
 
 **** Instrucciones de cadena
 
+Cada instrucción de manipulación de cadenas necesita un operando de
+origen y un operando destino. Para operaciones de 16 bits se utiliza
+el registro =si= como origen y =di= como destino, el modo 32 bits
+utiliza sus versiones extendidas (=esi= y =edi=). Existen cinco
+instrucciones básicas para manipular cadenas:
 
++ =movs= :: Copia un byte de una ubicación de memoria a otra.
++ =lods= :: Carga información desde una dirección de memoria. Si el
+            operando es de un byte de longigtud, la información se
+            carga dentro del registro =al=, si el operando es de una
+            palabra se carga en el registro =ax= y si es de una
+            palabra doble se carga en el registro =rax=.
++ =stos= :: Guarda la información almacenada en el registro =al= (=ax=
+            o =eax= dependiendo la longitud) hacia una dirección de
+            memoria.
++ =cmps= :: Compara dos elementos en memoria.
++ =scas= :: Compara el contenido del registro =al= (=ax= o =eax=) con
+            el contenido de un elemento en memoria.
+
+Cada una de estas instrucciones posee una versión para mover un byte,
+palabra, palabra doble y palabra cuádruple. Todas las instrucciones
+pueden ejecutarse simultáneamente haciendo uso de un prefijo de
+repetición (=rep=).
 
 ** Fecha de entrega
 
