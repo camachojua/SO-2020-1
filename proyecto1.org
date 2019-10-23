@@ -632,27 +632,50 @@ caracter imprimible:
 
 Cada instrucción de manipulación de cadenas necesita un operando de
 origen y un operando destino. Para operaciones de 16 bits se utiliza
-el registro =si= como origen y =di= como destino, el modo 32 bits
-utiliza sus versiones extendidas (=esi= y =edi=). Existen cinco
+el registro =%si= como origen y =%di= como destino, el modo 32 bits
+utiliza sus versiones extendidas (=%esi= y =%edi=). Existen cinco
 instrucciones básicas para manipular cadenas:
 
 + =movs= :: Copia un byte de una ubicación de memoria a otra.
 + =lods= :: Carga información desde una dirección de memoria. Si el
             operando es de un byte de longigtud, la información se
-            carga dentro del registro =al=, si el operando es de una
-            palabra se carga en el registro =ax= y si es de una
-            palabra doble se carga en el registro =rax=.
-+ =stos= :: Guarda la información almacenada en el registro =al= (=ax=
-            o =eax= dependiendo la longitud) hacia una dirección de
-            memoria.
+            carga dentro del registro =%al=, si el operando es de una
+            palabra se carga en el registro =%ax= y si es de una
+            palabra doble se carga en el registro =%rax=.
++ =stos= :: Guarda la información almacenada en el registro =%al=
+            (=%ax= o =%eax= dependiendo la longitud) hacia una
+            dirección de memoria.
 + =cmps= :: Compara dos elementos en memoria.
-+ =scas= :: Compara el contenido del registro =al= (=ax= o =eax=) con
++ =scas= :: Compara el contenido del registro =%al= (=%ax= o =%eax=) con
             el contenido de un elemento en memoria.
 
 Cada una de estas instrucciones posee una versión para mover un byte,
 palabra, palabra doble y palabra cuádruple. Todas las instrucciones
 pueden ejecutarse simultáneamente haciendo uso de un prefijo de
-repetición (=rep=).
+repetición (=rep=). Estas instrucciones utilizan dos conjuntos de
+registros: =%es:%di= y =%ds:%si=. Los registros =%di= y =%si= deben
+contener una dirección de desplazamiento válida ya que hacen
+referencia a los elementos de la cadena, por convención =%si= se
+asocia al segmento de datos (=%ds=) mientras que =%di= se asocia al
+segmento extra (=%es=).
+
+Recapitulando, el registro =%ds:%si= apunta al operando origen de la
+operación mientras que el registro =%es:%di= apunta al operando
+destino de la misma operación. La siguiente tabla muestra los
+operandos involucrados en cada una de las operaciones antes señaladas:
+
+| Instrución | Origen, destino  |
+|------------+------------------|
+| movs       | %ds:%si, %es:%di |
+| lods       | %ds:%si, %ax     |
+| stos       | %ax, %es:%di     |
+| cmps       | %es:%di, %ds:%si |
+| scas       | %ax, %es:%di     |
+
+**** Prefijos de repetición
+
+Los prefijos de repetición son utilizados *antes* de una instrucción
+de manipulación de cadena.
 
 ** Fecha de entrega
 
