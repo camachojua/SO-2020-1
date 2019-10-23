@@ -51,7 +51,6 @@ HDD -> RAM [label= " El MBR apunta a la dirección 0000:7C00"]
 }
 #+END_SRC
 
-#+RESULTS:
 [[https://raw.githubusercontent.com/camachojua/SO-2020-1/master/img/proceso.png]]
 
 
