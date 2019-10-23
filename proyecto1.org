@@ -52,7 +52,7 @@ HDD -> RAM [label= " El MBR apunta a la dirección 0000:7C00"]
 #+END_SRC
 
 #+RESULTS:
-[[file:img/proceso.png]]
+[[[[file:img/proceso.png]]]]
 
 El proceso seguido por el programa =POST= es el siguiente:
 
@@ -277,7 +277,7 @@ Esto ejecutará =qemu= e interpretará nuestro cargador de arranque,
 desafortunadamente nuestro cargador no hace nada más que ser
 reconocido por el BIOS.
 
-[[./img/floppy.png]]
+[[https://raw.githubusercontent.com/camachojua/SO-2020-1/master/img/floppy.png]]
 
 La firma de arranque se puede ver al obtener la información en
 hexadecimal del archivo =floppy.img=:
