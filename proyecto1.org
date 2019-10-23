@@ -642,6 +642,53 @@ las entradas y después hace un cálculo para determinar el
 desplazamiento de la dirección de inicio del buffer de vídeo. Una
 manera más rápida es escribir directamente en la memoria de vídeo.
 
+El segmento de memoria de vídeo inicia en la dirección =0xA000=,
+escribir cualquier información en esa área de memoria resultará en
+algo dibujado en la pantalla, el color mostrado depende del byte
+almacenado en el registro =%al=:
+
+| Valor | Color         |
+|-------+---------------|
+|     0 | Negro         |
+|     1 | Azul          |
+|     2 | Verde         |
+|     3 | Cyan          |
+|     4 | Rojo          |
+|     5 | Magenta       |
+|     6 | Café          |
+|     7 | Gris claro    |
+|     8 | Gris oscuro   |
+|     9 | Azul claro    |
+|    10 | Verde claro   |
+|    11 | Cyan claro    |
+|    12 | Rojo claro    |
+|    13 | Magenta claro |
+|    14 | Amarillo      |
+|    15 | Blanco        |
+
+Dado que la memoria es lineal (a comparación de las dos dimensiones
+mostradas en la pantalla) es necesario calcular un desplazamiento para
+poder insertar un pixel en la posición deseada. Esto se hace
+mulitplicando el valor de la coordenada =y= por el ancho de la
+pantalla (=320= para el modo =0x13=) y después sumando el valor de la
+coordenada =x=. Así pues, para escribir el pixel en la posición =(256,
+8)= debemos calcular =8*320 + 256= que resulta en =2816= o =0x0b00=,
+de esta forma podemos escribir algo en la dirección =0xa000 + 0x0b00=,
+utilizando C podemos escribir esta operación como:
+
+#+BEGIN_SRC c
+  unsigned char byte *vga = (byte*) 0xA0000000L;
+  unsigned short offset;
+
+  unsigned int x = 256;
+  unsigned int y = 8;
+  unsigned int color = 13;
+
+  offset = 320*y + x;
+  vga[offset] = color;
+#+END_SRC
+
+
 *** Manipulación de cadenas
 
 Hasta el momento hemos estado trabajando con cadenas de longitud fija,
