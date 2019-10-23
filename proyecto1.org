@@ -592,9 +592,9 @@ vídeo: desde 2 colores a 256 y resoluciones desde 320x200 hasta
 
 En este modo de vídeo las dimensiones de la patalla son 320 pixeles de
 ancho por 200 pixeles de alto. Esto genera una matriz de 320 elementos
-en el eje $x$ y 200 en el eje $y$, el origen $(0,0)$ se encuentra en
+en el eje =x= y 200 en el eje =y=, el origen =(0,0)= se encuentra en
 la esquina superior izquierda como lo muestra la figura de abajo, cada
-pixel es representado por 8 bits ($2^8=256$) o un byte, de esta forma
+pixel es representado por 8 bits (=2^8=256=) o un byte, de esta forma
 la memoria necesaria para escribir en la pantalla es de 300x200 bytes o
 64,000 bytes.
 
