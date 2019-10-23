@@ -667,10 +667,10 @@ operandos involucrados en cada una de las operaciones antes señaladas:
 | Instrución | Origen, destino      |
 |------------+----------------------|
 | movs       | =%ds:%si=, =%es:%di= |
-| lods       | %ds:%si, %ax         |
-| stos       | %ax, %es:%di         |
-| cmps       | %es:%di, %ds:%si     |
-| scas       | %ax, %es:%di         |
+| lods       | =%ds:%si=, =%ax=     |
+| stos       | =%ax=, =%es:%di=     |
+| cmps       | =%es:%di=, =%ds:%si= |
+| scas       | =%ax=, =%es:%di=     |
 
 **** Prefijos de repetición
 
