@@ -210,7 +210,7 @@ vídeo y limpiar la pantalla:
   _start:
           mov $0x02, %al
           mov $0x00, %ah
-          int 0x10
+          int $0x10
 #+END_SRC
 
 La primer línea establece el modo de vídeo (texto de 80 columnas con
@@ -613,7 +613,7 @@ debemos ejecutar las siguientes instrucciones:
 #+BEGIN_SRC asm
 mov $0x13, %al
 mov $0x00, %ah
-int 0x10
+int $0x10
 #+END_SRC
 
 Para regresar al modo texto simplemente utilizamos la función =0x03=
@@ -622,7 +622,7 @@ de la interrupción =0x10=:
 #+BEGIN_SRC asm
 mov $0x03, %al
 mov $0x00, %ah
-int 0x10
+int $0x10
 #+END_SRC
 
 **** Dibujando un pixel
@@ -637,7 +637,7 @@ mov $0x02, %al
 mov $0x0c, %ah
 mov $159, %cx
 mov $99, %dx
-int 0x10
+int $0x10
 #+END_SRC
 
 Esta forma de dibujar es muy sencilla, sin embargo es ineficiente
@@ -702,12 +702,16 @@ rectángulo amarillo a la mitad en la pantalla:
   _start:
           jmp boot
   dibuja:
+          mov $0x13, %al
+          mov $0x00, %ah
+          int $0x10
+
           mov $159, %cx
           mov $127, %dx
 
           mov $0x0e, %al
           mov $0x0c, %ah
-          int 0x10h
+          int $0x10h
           ret
   boot:
           dibuja
