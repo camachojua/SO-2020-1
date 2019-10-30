@@ -10,12 +10,14 @@ modo:
         int $0x10
 
 dibuja:
-        dec %bx                 # Decremento el contador
         add %bx, %cx            # Nos desplazamos en X
         mov $0x02, %al          # Indicamos el color
         mov $0x0c, %ah          # Modo de video a color
         int $0x10
-        jnz dibuja
+        dec %bx                 # Decremento el contador
+        cmp $0, %bx
+        jz salir
+        call dibuja
 
 salir:
         ret
