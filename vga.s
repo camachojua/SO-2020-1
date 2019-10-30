@@ -11,6 +11,7 @@ modo:
 
 dibuja:
         add %bx, %cx            # Nos desplazamos en X
+        add %bx, %dx            # Nos desplazamos en Y
         mov $0x02, %al          # Indicamos el color
         mov $0x0c, %ah          # Modo de video a color
         int $0x10
