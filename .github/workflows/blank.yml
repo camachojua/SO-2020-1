@@ -1,0 +1,17 @@
+name: CI
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Install build essentials
+      run: apt update && apt install build-essentials
+    - name: Install qemu
+      run: apt instal qemu
+    - name: Assemble application
+      run: as vga.s -o vga.o
