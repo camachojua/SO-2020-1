@@ -10,8 +10,8 @@ modo:
         int $0x10
 
 dibuja:
-        add %bx, %cx            # Nos desplazamos en X
-        add %bx, %dx            # Nos desplazamos en Y
+        inc %cx                 # Nos desplazamos en X
+        inc %dx                 # Nos desplazamos en Y
         mov $0x02, %al          # Indicamos el color
         mov $0x0c, %ah          # Modo de video a color
         int $0x10
@@ -24,7 +24,7 @@ salir:
         ret
 
 boot:
-        mov $5, %bx             # Longitud de la linea
+        mov $50, %bx            # Longitud de la linea
         mov $160, %cx           # Coordenada X inicial
         mov $100, %dx           # Coordenada Y inicial
         jmp modo
