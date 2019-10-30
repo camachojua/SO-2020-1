@@ -693,7 +693,8 @@ utilizando C podemos escribir esta operación como:
 #+END_SRC
 
 A manera de ejemplo completo el siguiente programa muestra un
-rectángulo amarillo a la mitad en la pantalla:
+rectángulo amarillo a la mitad en la pantalla, para ello *es sumamente
+importante cambiar el modo de vídeo antes de comenzar a dibujar*:
 
 #+BEGIN_SRC asm
           .globl _start
@@ -701,23 +702,40 @@ rectángulo amarillo a la mitad en la pantalla:
           .text
   _start:
           jmp boot
-  dibuja:
+  modo:
           mov $0x13, %al
           mov $0x00, %ah
           int $0x10
 
+  dibuja:
           mov $159, %cx
-          mov $127, %dx
-
-          mov $0x0e, %al
+          mov %bx, %dx
+          mov $0x02, %al
           mov $0x0c, %ah
-          int $0x10h
+          int $0x10
+          jz salir
+          call dibuja
+
+  salir:
           ret
+
   boot:
-          dibuja
+          jmp modo
           .= _start + 510
           .byte 0x55
           .byte 0xaa
+
+#+END_SRC
+
+Como recordatorio se dejarán las instrucciones de ensamblado y
+ejecución de este programa
+
+#+BEGIN_SRC sh
+as pixel.s -o pixel.o
+ld -Ttext 0x7c00 --oformat=binary pixel.o -o pixel.bin
+dd if=/dev/zero of=pixel.img bs=512 count=2880
+dd if=pixel.bin of=pixel.img
+qemu-system-x86_64 -fda pixel.img
 #+END_SRC
 
 *** Manipulación de cadenas

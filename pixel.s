@@ -8,8 +8,7 @@ modo:
         mov $0x00, %ah
         int $0x10
 
-
-dibuja
+dibuja:
 	mov $159, %cx
         mov %bx, %dx
         mov $0x02, %al
