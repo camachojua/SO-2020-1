@@ -8,7 +8,7 @@ tecla:
 	mov $0x00, %ah  # Obten tecla presionada
         int $0x16       # Interrupcion de teclado
 
-        cmp $0x36, %al
+        cmp $0x36, %ah
         je enter
 
         # Aqui el caracter que se puso esta en %al
