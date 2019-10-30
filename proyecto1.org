@@ -688,7 +688,6 @@ utilizando C podemos escribir esta operación como:
   vga[offset] = color;
 #+END_SRC
 
-
 *** Manipulación de cadenas
 
 Hasta el momento hemos estado trabajando con cadenas de longitud fija,
