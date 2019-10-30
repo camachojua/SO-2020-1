@@ -10,12 +10,9 @@ modo:
 
 dibuja:
 	mov $159, %cx
-        mov %bx, %dx
         mov $0x02, %al
         mov $0x0c, %ah
         int $0x10
-        jz salir
-        call dibuja
 
 salir:
         ret
