@@ -692,6 +692,30 @@ utilizando C podemos escribir esta operación como:
   vga[offset] = color;
 #+END_SRC
 
+A manera de ejemplo completo el siguiente programa muestra un
+rectángulo amarillo a la mitad en la pantalla:
+
+#+BEGIN_SRC asm
+          .globl _start
+          .code16
+          .text
+  _start:
+          jmp boot
+  dibuja:
+          mov $159, %cx
+          mov $127, %dx
+
+          mov $0x0e, %al
+          mov $0x0c, %ah
+          int 0x10h
+          ret
+  boot:
+          dibuja
+          .= _start + 510
+          .byte 0x55
+          .byte 0xaa
+#+END_SRC
+
 *** Manipulación de cadenas
 
 Hasta el momento hemos estado trabajando con cadenas de longitud fija,
