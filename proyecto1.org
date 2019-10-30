@@ -227,6 +227,10 @@ Algunas funciones de las interrupciones puede ser encontrada [[https://en.wikipe
 descripción completa de las interrupciones, sus funciones y el orden
 de los parámetros puede ser consultada [[ftp://ftp.embeddedarm.com/old/saved-downloads-manuals/EBIOS-UM.PDF][aquí]].
 
+**** Recursos
+
++ [[http://www.ctyme.com/intr/cat.htm][Lista de interrupciones con bastantes ejemplos]].
+
 ** Generación del cargador de arranque
 
 Cuando el CPU inicia en modo real (16 bits) lo único que podemos hacer
