@@ -5,22 +5,36 @@ _start:
         jmp boot
 
 limpiaPantalla:         # Se limpia la pantalla antes de iniciar
-
 	mov $0x03, %al  # Modo texto 80x25
         mov $0x00, %ah
         int $0x10
 
-tecla:
+imprimePrompt:
+        mov $0x3e, %al
+        mov $0x0e, %ah
+        int $0x10
 
+        mov $0x20, %al
+        mov $0x0e, %ah
+        int $0x10
+        jmp tecla
+
+tecla:
 	mov $0x00, %ah  # Obten tecla presionada.
         int $0x16       # Interrupcion de teclado.
 
-        cmp $0x0d, %al
+
+detectaTecla:
+        cmp $0x0d, %al  # Es enter?
         je enter
 
-        cmp $0x08, %al
+        cmp $0x08, %al  # Es backspace?
         je backspace
 
+        cmp $0x4b, %ah # Es cursor izquierdo?
+        je izquierda
+
+imprimeTecla:
         # Aqui el caracter que se puso esta en %al.
         mov $0x0e, %ah  # Imprimir caracter almacenado en %al.
         int $0x10
@@ -37,7 +51,7 @@ enter:
         mov $0x0e, %ah
         int $0x10
 
-        jmp tecla       # Regresamos a leer lo que se tenga que leer.
+        jmp imprimePrompt       # Imprimimos el prompt
 
 backspace:
 
@@ -54,6 +68,17 @@ backspace:
         int $0x10
 
         jmp tecla       # Regresamos a leer lo que se tenga que leer.
+
+izquierda:
+
+        mov $0x03, %ah
+        int $0x10
+
+        mov $0x02, %ah
+        dec %dl
+        int $0x10
+
+        jmp tecla
 
 boot:
         jmp limpiaPantalla
