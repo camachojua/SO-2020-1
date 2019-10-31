@@ -37,8 +37,11 @@ detectaTecla:
         cmp $0x08, %al  # Es backspace?
         je backspace
 
-        cmp $0x4b, %ah # Es cursor izquierdo?
+        cmp $0x4b, %ah # Es flecha izquierda?
         je izquierda
+
+        cmp $0x4d, %ah # Es flecha derecha?
+        je derecha
 
 imprimeTecla:
         # Aqui el caracter que se puso esta en %al.
@@ -76,18 +79,27 @@ backspace:
         jmp tecla
 
 izquierda:
-
-        mov $0x03, %ah
+        mov $0x03, %ah  # Se pide la posicion actual del cursor
         int $0x10
 
-        mov $0x02, %ah
+        mov $0x02, %ah  # Se cambia la posicion actual del cursor
         dec %dl
         int $0x10
 
         jmp tecla
 
-shutdown:
+derecha:
+        mov $0x03, %ah
+        int $0x10
 
+        mov $0x02, %ah
+        inc %dl
+        int $0x10
+
+        jmp tecla
+
+
+shutdown:
         mov $0x5301, %ax
         xor %bx, %bx
         int $0x15

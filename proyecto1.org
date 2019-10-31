@@ -981,6 +981,21 @@ mostrarlos en pantalla a través de la llamada al sistema =write=.
           syscall
 #+END_SRC
 
+** Cargador de arranque
+
+Para concluir con la sección de teoría se muestra un ejemplo de
+cargador de arranque que hace uso de todo lo expuesto hasta este
+punto, el cargador limpia la pantalla al iniciar su ejecución,
+establece un modo de vídeo en *modo texto de 80 columnas por 25
+renglones* y muestra un prompt =>= el cual espera alguna acción, la
+funcionalidad disponible es:
+
++ Imprime los caracteres presionados por el teclado (ps2).
++ Soporte para la tecla =backspace= (borra el caracter anterior al
+  cursor).
++ Soporte para el desplazamiento hacia la izquierda del cursor.
++ Soporte para el desplazamiento hacia la derecha del cursor.
+
 ** Fecha de entrega
 
 *2 de noviembre de 2019*
@@ -989,10 +1004,10 @@ mostrarlos en pantalla a través de la llamada al sistema =write=.
 
 1. Describir el procedimiento =POST= que siguien las computadoras al
    momento de presionar el botón de encendido.
-2. Utilizando el archivo [[https://github.com/camachojua/SO-2020-1/blob/master/cargador.s][=cargador.s=]] como guía generar un cargador de
-   arranque capaz de escribir en pantalla las teclas que presiona en
-   usuario, es decir, si el usuario escribe =esta es una prueba= esa
-   misma cadena se deberá mostrar en la pantalla:
+2. Utilizando el archivo [[https://github.com/camachojua/SO-2020-1/blob/master/cargador.s][=cargador.s=]] y =[[https://github.com/camachojua/SO-2020-1/blob/master/teclado.s][teclado.s]]= como guía generar
+   un cargador de arranque capaz de escribir en pantalla las teclas
+   que presiona en usuario, es decir, si el usuario escribe =esta es
+   una prueba= esa misma cadena se deberá mostrar en la pantalla:
 
 #+BEGIN_SRC sh
 > Esta es una prueba
