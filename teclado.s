@@ -4,20 +4,26 @@
 _start:
         jmp boot
 
+prompt: .asciz "> "
+        .macro imprimePrompt cadena
+        leaw \cadena, %si
+        call imprimeCadena
+        .endm
+
 limpiaPantalla:         # Se limpia la pantalla antes de iniciar
 	mov $0x03, %al  # Modo texto 80x25
         mov $0x00, %ah
         int $0x10
 
-imprimePrompt:
-        mov $0x3e, %al
-        mov $0x0e, %ah
-        int $0x10
+        imprimePrompt prompt
 
-        mov $0x20, %al
+imprimeCadena:          # Recorremos la cadena del prompt
+        lodsb
+        orb %al, %al
+        jz tecla
         mov $0x0e, %ah
         int $0x10
-        jmp tecla
+        jmp imprimeCadena
 
 tecla:
 	mov $0x00, %ah  # Obten tecla presionada.
@@ -51,7 +57,7 @@ enter:
         mov $0x0e, %ah
         int $0x10
 
-        jmp imprimePrompt       # Imprimimos el prompt
+        imprimePrompt prompt    # Imprimimos el prompt
 
 backspace:
 
@@ -67,7 +73,7 @@ backspace:
         mov $0x0e, %ah  # Movemos el cursor
         int $0x10
 
-        jmp tecla       # Regresamos a leer lo que se tenga que leer.
+        jmp tecla
 
 izquierda:
 
@@ -79,6 +85,22 @@ izquierda:
         int $0x10
 
         jmp tecla
+
+shutdown:
+
+        mov $0x5301, %ax
+        xor %bx, %bx
+        int $0x15
+
+        mov $0x530e, %ax
+        xor %bx, %bx
+        mov $0x0102, %cx
+        int $0x15
+
+        mov $0x5307, %ax
+        mov $0x0001, %bx
+        mov $0x0003, %cx
+        int $0x15
 
 boot:
         jmp limpiaPantalla
