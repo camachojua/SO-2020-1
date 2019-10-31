@@ -98,7 +98,6 @@ derecha:
 
         jmp tecla
 
-
 shutdown:
         mov $0x5301, %ax
         xor %bx, %bx
