@@ -11,11 +11,15 @@ limpiaPantalla:         # Se limpia la pantalla antes de iniciar
         int $0x10
 
 tecla:
+
 	mov $0x00, %ah  # Obten tecla presionada.
         int $0x16       # Interrupcion de teclado.
 
         cmp $0x0d, %al
         je enter
+
+        cmp $0x08, %al
+        je backspace
 
         # Aqui el caracter que se puso esta en %al.
         mov $0x0e, %ah  # Imprimir caracter almacenado en %al.
@@ -23,9 +27,6 @@ tecla:
 
 repite:
         jmp tecla       # Repite por siempre
-
-        # TODO: Implementar salto de linea y retorno de carro.
-        #       "\n\lf" se realiza cuando apretamos enter.
 
 enter:
         mov $0x0d, %al  # Imprimimos un retorno de carro
@@ -39,13 +40,20 @@ enter:
         jmp tecla       # Regresamos a leer lo que se tenga que leer.
 
 backspace:
-        # TODO: detectar backspace
-        jmp tecla       # Regresamos a leer lo que se tenga que leer.
 
-supr:
-        # TODO: detectar suprimir
-        jmp tecla       # Regresamos a leer lo que se tenga que leer.
+	mov $0x08, %al  # Nos movemos para atras
+        mov $0x0e, %ah  # Movemos el cursor
+        int $0x10
 
+        mov $0x20, %al  # Espacio en blanco
+        mov $0x0e, %ah  # Imprimimos el espacio en blanco
+        int $0x10
+
+        mov $0x08, %al  # Nos movemos para atras
+        mov $0x0e, %ah  # Movemos el cursor
+        int $0x10
+
+        jmp tecla       # Regresamos a leer lo que se tenga que leer.
 
 boot:
         jmp limpiaPantalla
