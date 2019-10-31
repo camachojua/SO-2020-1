@@ -983,7 +983,7 @@ mostrarlos en pantalla a través de la llamada al sistema =write=.
 
 ** Fecha de entrega
 
-*29 de Octubre de 2019*
+*2 de noviembre de 2019*
 
 ** Ejercicios
 

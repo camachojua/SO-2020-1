@@ -22,7 +22,11 @@ repite:
         #       "\lf" se realiza cuando apretamos enter
 
 enter:
-        mov $'\n', %al  # TODO: Imprimimos un salto de linea
+        mov $0x0a, %al  # TODO: Imprimimos un salto de linea
+        mov $0x0e, %ah
+        int $0x10
+
+        mov $0x0d, %al
         mov $0x0e, %ah
         int $0x10
         jmp tecla       # Regresamos a leer
