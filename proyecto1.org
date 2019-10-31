@@ -995,6 +995,8 @@ funcionalidad disponible es:
   cursor).
 + Soporte para el desplazamiento hacia la izquierda del cursor.
 + Soporte para el desplazamiento hacia la derecha del cursor.
++ Definición de la función =shutdown= que al llamarse apagaría el
+  equipo.
 
 El código del archivo =teclado.s= es el siguiente:
 
