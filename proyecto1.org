@@ -1136,6 +1136,9 @@ Para compilarlo debemos seguir las siguientes instrucciones:
 
 Al ejecutarlo obtenemos algo como lo que se muestra aquí:
 
+[[https://raw.githubusercontent.com/camachojua/SO-2020-1/master/img/teclado.png]]
+
+
 ** Fecha de entrega
 
 *2 de noviembre de 2019*
