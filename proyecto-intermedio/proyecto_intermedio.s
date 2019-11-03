@@ -1,5 +1,6 @@
 .code16
 .globl main
+.globl _start
 .text                           # Inicio de la seccion de texto
 
 main:                           # main
