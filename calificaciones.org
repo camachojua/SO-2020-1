@@ -1,14 +1,14 @@
 * Calificaciones
-| Nombre                   | Práctica 1 | Práctica 2 | Práctica 3 | Práctica 4 | Proyecto 1 |
-|--------------------------+------------+------------+------------+------------+------------|
-| José Manuel Chávez Pavon |            |            |            |            |    9.0*    |
-|                          |            |            |            |            |            |
-|                          |            |            |            |            |            |
-|                          |            |            |            |            |            |
-|                          |            |            |            |            |            |
-|                          |            |            |            |            |            |
-|                          |            |            |            |            |            |
-|                          |            |            |            |            |            |
-|                          |            |            |            |            |            |
+| Nombre                     | Práctica 1 | Práctica 2 | Práctica 3 | Práctica 4 | Proyecto 1 |
+|----------------------------+------------+------------+------------+------------+------------|
+| José Manuel Chávez Pavon   |            |            |            |            | 9.0        |
+| Naomi Itzel Reyes Granados |            |            |            |            | 9.0        |
+|                            |            |            |            |            |            |
+|                            |            |            |            |            |            |
+|                            |            |            |            |            |            |
+|                            |            |            |            |            |            |
+|                            |            |            |            |            |            |
+|                            |            |            |            |            |            |
+|                            |            |            |            |            |            |
 
 Las calificaciones que contienen un asterisco se encuentran condicionadas.
