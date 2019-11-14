@@ -106,5 +106,14 @@ uso de las llamadas al sistema: =connect()=, =send()= y =recv()=:
 #+END_SRC
 
 *** Direcciones de red
+Para mandar un mensaje en internet es necesario tener un mecanismo
+capaz de identificar a todos los dispositivos que se encuentran
+conectados a la internet, ese mecanismo está dado vía el protocolo IP,
+el cual hace uso de *direcciones IP (Internet Protocol Adress)*. La
+versión 4 del protocolo IP utiliza 32 bits para determinar una
+dirección dividida en cuatro octetos, cada uno de 8 bits. Las
+direcciones IP se escriben con la siguiente notación: =N1.N2.N3.N4=
+donde cada =Ni= puede poseer un valor del =0= al =255= en decimal
+(=0x00= al =0xFF= en hexadecimal).
 *** Modelo cliente servidor
 ** Ejemplos
