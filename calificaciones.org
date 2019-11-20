@@ -5,7 +5,7 @@
 | Naomi Itzel Reyes Granados |         10 |         10 |            |            |        9.0 |                          |
 | Adriana Sánchez del Moral  |            |            |            |            |        8.5 |                          |
 | Jorge Macías Gómez         |            |            |            |            |        8.5 |                          |
-| David Iván Morales Campos  |            |            |            |            |            |                          |
+| David Iván Morales Campos  |            |            |            |            |        8.0 |                          |
 |                            |            |            |            |            |            |                          |
 |                            |            |            |            |            |            |                          |
 |                            |            |            |            |            |            |                          |
