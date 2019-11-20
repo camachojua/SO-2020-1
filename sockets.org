@@ -115,5 +115,11 @@ dirección dividida en cuatro octetos, cada uno de 8 bits. Las
 direcciones IP se escriben con la siguiente notación: =N1.N2.N3.N4=
 donde cada =Ni= puede poseer un valor del =0= al =255= en decimal
 (=0x00= al =0xFF= en hexadecimal).
+
+Las direcciones IP se encuentran divididas en grupos determinados por
+la *Internet Assigned Numbers Authority (IANA)*, fijando los bytes de
+la dirección es posible crear las siguientes clases:
+
++ *Clase A* :: Inician con =0xxx=, o en su notacilon decimal =[1-256].0.0.0=.
 *** Modelo cliente servidor
 ** Ejemplos
