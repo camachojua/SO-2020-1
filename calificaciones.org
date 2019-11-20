@@ -6,7 +6,7 @@
 | Adriana Sánchez del Moral  |            |            |            |            |        8.5 |                          |
 | Jorge Macías Gómez         |            |            |            |            |        8.5 |                          |
 | David Iván Morales Campos  |            |            |            |            |        8.0 |                          |
-| Miguel Escamilla Monroy    |            |            |            |            |            |                          |
+| Miguel Escamilla Monroy    |         10 |            |            |            |            |                          |
 |                            |            |            |            |            |            |                          |
 |                            |            |            |            |            |            |                          |
 |                            |            |            |            |            |            |                          |
