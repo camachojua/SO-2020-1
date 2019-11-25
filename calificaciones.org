@@ -9,6 +9,9 @@
 | Miguel Escamilla Monroy           |         10 |         10 |            |            |        9.0 |                          |
 | Alejandro Manuel Vargas Aldaco    |         10 |            |            |            |            |                          |
 | Luis Enrique Rodríguez de la Rosa |         10 |            |            |            |            |                          |
+| Juan Daniel Cortez Rojas          |         10 |         10 |         10 |         10 |            |                          |
+|                                   |            |            |            |            |            |                          |
+|                                   |            |            |            |            |            |                          |
 |                                   |            |            |            |            |            |                          |
 
 Las calificaciones que contienen un asterisco se encuentran condicionadas.
