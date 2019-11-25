@@ -1,0 +1,125 @@
+* Introducción a la programación en red con C
+** Teoría
+Los sockets son una estrategia de comunicación entre procesos (que
+pueden estar en distintos equipos de cómputo y distintos sistemas
+operativos). En Unix un socket es un tipo de archivo especial, la
+comunicación entre los procesos se lleva a cabo realizando operaciones
+de entrada y salida.
+
+Dado que los sockets son archivos es necesario crear un *descriptor de
+archivo* para crear un nuevo socket, para leer información de un
+socket (recibir información de la red) se puede hacer uso de la
+llamada al sistema =read()= mientras que para enviar información a
+través de la red se puede hacer uso de la llamada al sistema =write()=.
+
+*** Tipos de Sockets
+Existen cuatro tipos de sockets disponibles para los
+programadores. Los primeros dos son los tipos más utilizados. Como
+buen patrón de diseño es recomendable comunicar sockets del mismo tipo
+entre sí. Los tipos de sockets son:
+
++ Sockets de flujo :: El envío de la información en un canal de red
+     está garantizada. Si se envían los bytes =0x0a=, =0x0b= y =0x0c=
+     estos bytes llegarán a su destino en ese mismo orden: =0x0a=,
+     =0x0b= y =0x0c=, este tipo de sockets utilizan el *protocolo TCP*
+     para la transmisión de la información, antes de poder enviar
+     información es necesario establecer una conexión entre los
+     involucrados. Si la entrega de la información no puede realizarse
+     estos sockets mandan un error.
++ Sockets de datagrama :: La entrega de la información no está
+     garantizada. Este tipo de sockets *no tienen noción del estado de
+     conexión*, sin embargo permiten enviar información *sin necesidad
+     de realizar una conexión previa* (sólo basta con indicar el
+     destinatario para mandar la información). El protocolo utilizado
+     es UDP.
++ Sockets crudos :: Proven la maquinaria básica para utilizar las
+                    abstracciones de los protocolos de comunicación,
+                    generalmente son utilizados como bloque de
+                    construcción para nuevos protocolos de red.
++ Sockets de secuencia de paquetes :: Utilizada como parte de sistemas
+     de red grandes.
+
+Para el proyecto únicamente se utilizarán los sockets de flujo y
+sockets de datagrama, en particular se utilizarán las implementaciones
+=AF_UNIX=, =AF_INET= y =AF_INET6=:
+
++ =AF_UNIX= :: Socket utilizado para la comunicación local.
++ =AF_INET= :: Socket utilizado para la comunicación con el protocolo IPv4.
++ =AF_INET6= :: Socket utilizado para la comunicación con el protocolo IPv6.
+
+El tipo de socket esta definido por:
+
++ =SOCK_STREAM= :: Provee una comunicación de dos vías confiable y
+                   secuencial. El flujo debe estar en un estado
+                   *conectado* antes de poder enviar un mensaje
+                   (llamada al sistema =connect()=). Envía información
+                   con la llamada al sistema =send()= y recibe
+                   información con la llamada al sistema =recv()=.
++ =SOCK_DGRAM= :: Provee una comunicación unilateral sin conexión y
+                  con mensajes de una longitud máxima. Capaz de enviar
+                  información si necesidad de establecer una conexión
+                  (usando la llamada al sistema =sendto()=), recibe
+                  información vía la llamada al sistema =recvfrom()=.
+
+Para crear un socket debemos importar la biblioteca =types.h= y
+=sockets.h=, un socket se genera haciendo uso de la llamada al sistema
+=socket()=:
+
+#+BEGIN_SRC c
+  #include <sys/types.h>
+  #include <sys/socket.h>
+  #include <stdio.h>
+
+  void main()
+  {
+    int dominio = AF_INET;
+    int tipo = SOCK_STREAM;
+    int version_protocolo = 0;
+    int mi_socket = socket(dominio, tipo, version_protocolo);
+
+    if (mi_socket != -1)
+      printf("Error al crear el socket.\n");
+  }
+#+END_SRC
+
+La llamada al sistema socket recibe tres parámetros: el tipo de
+socket, el protocolo de trabajo y la versión del protocolo.
+
+Cuando el protocolo del socket es TCP (=SOCK_STREAM=) se debe hacer
+uso de las llamadas al sistema: =connect()=, =send()= y =recv()=:
+
+#+BEGIN_SRC c
+  #include <sys/types.h>
+  #include <sys/socket.h>
+  #include <stdio.h>
+
+  void main()
+  {
+    int mi_socket = socket(AF_INET, SOCK_STREAM, 0);
+
+    if (mi_socket > 0)
+      printf("Error al crear el socket.\n");
+
+    const struct sockaddr direccion = null;
+    .int conexion = connect(mi_socket, *direccion, coso)
+  }
+#+END_SRC
+
+*** Direcciones de red
+Para mandar un mensaje en internet es necesario tener un mecanismo
+capaz de identificar a todos los dispositivos que se encuentran
+conectados a la internet, ese mecanismo está dado vía el protocolo IP,
+el cual hace uso de *direcciones IP (Internet Protocol Adress)*. La
+versión 4 del protocolo IP utiliza 32 bits para determinar una
+dirección dividida en cuatro octetos, cada uno de 8 bits. Las
+direcciones IP se escriben con la siguiente notación: =N1.N2.N3.N4=
+donde cada =Ni= puede poseer un valor del =0= al =255= en decimal
+(=0x00= al =0xFF= en hexadecimal).
+
+Las direcciones IP se encuentran divididas en grupos determinados por
+la *Internet Assigned Numbers Authority (IANA)*, fijando los bytes de
+la dirección es posible crear las siguientes clases:
+
++ *Clase A* :: Inician con =0xxx=, o en su notacilon decimal =[1-256].0.0.0=.
+*** Modelo cliente servidor
+** Ejemplos

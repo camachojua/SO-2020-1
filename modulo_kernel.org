@@ -1,0 +1,9 @@
+* Creación de un módulo de kernel
+** Teoría
+** Administración de módulos de kernel
+** Creación de un módulo de kernel simple
+*** Requisitos
+*** Creando el módulo
+*** Instalando el módulo
+*** Ejecutando el módulo
+*** Descargando el módulo
