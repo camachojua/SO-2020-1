@@ -10,7 +10,7 @@
 | Alejandro Manuel Vargas Aldaco    |         10 |            |            |            |            |                          |
 | Luis Enrique Rodríguez de la Rosa |         10 |            |            |            |            |                          |
 | Juan Daniel Cortez Rojas          |         10 |         10 |         10 |         10 |            |                          |
-| Manuel Sánchez Pavón              |            |            |         10 |            |            |                          |
+| Manuel Sánchez Pavón              |            |            |         10 |         10 |        8.5 |                          |
 | José Manuel Martínez Sánchez      |         10 |         10 |         10 |         10 |        9.0 |                          |
 |                                   |            |            |            |            |            |                          |
 
