@@ -13,5 +13,6 @@
 | Manuel Sánchez Pavón              |            |            |         10 |         10 |        8.5 |                          |
 | José Manuel Martínez Sánchez      |         10 |         10 |         10 |         10 |        9.0 |                          |
 | David Bautista Cázares            |            |            |            |            |        9.0 |                          |
+|                                   |            |            |            |            |            |                          |
 
 Las calificaciones que contienen un asterisco se encuentran condicionadas.
