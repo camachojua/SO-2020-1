@@ -1,18 +1,18 @@
 * Calificaciones
-| Nombre                            | Práctica 1 | Práctica 2 | Práctica 3 | Práctica 4 | Proyecto 1 | Calificación laboratorio |
-|-----------------------------------+------------+------------+------------+------------+------------+--------------------------|
-| José Manuel Chávez Pavon          |         10 |         10 |         10 |         10 |        9.0 |                          |
-| Naomi Itzel Reyes Granados        |         10 |         10 |         10 |         10 |        9.0 |                          |
-| Adriana Sánchez del Moral         |         10 |         10 |         10 |         10 |        8.5 |                          |
-| Jorge Macías Gómez                |            |            |            |            |        8.5 |                          |
-| David Iván Morales Campos         |         10 |         10 |         10 |         10 |        8.0 |                          |
-| Miguel Escamilla Monroy           |         10 |         10 |         10 |         10 |        9.0 |                          |
-| Alejandro Manuel Vargas Aldaco    |         10 |            |            |            |            |                          |
-| Luis Enrique Rodríguez de la Rosa |         10 |            |            |            |            |                          |
-| Juan Daniel Cortez Rojas          |         10 |         10 |         10 |         10 |            |                          |
-| Manuel Sánchez Pavón              |            |            |         10 |         10 |        8.5 |                          |
-| José Manuel Martínez Sánchez      |         10 |         10 |         10 |         10 |        9.0 |                          |
-| David Bautista Cázares            |            |            |            |            |        9.0 |                          |
-|                                   |            |            |            |            |            |                          |
+| Nombre                            | Práctica 1 | Práctica 2 | Práctica 3 | Práctica 4 | Proyecto 1 | Calificación practicas | Calificación laboratorio |
+|-----------------------------------+------------+------------+------------+------------+------------+------------------------+--------------------------|
+| José Manuel Chávez Pavon          |         10 |         10 |         10 |         10 |        9.0 |                     10 |                      9.2 |
+| Naomi Itzel Reyes Granados        |         10 |         10 |         10 |         10 |        9.0 |                     10 |                      9.2 |
+| Adriana Sánchez del Moral         |         10 |         10 |         10 |         10 |        8.5 |                     10 |                      8.8 |
+| Jorge Macías Gómez                |            |            |            |            |        8.5 |                      0 |                      6.8 |
+| David Iván Morales Campos         |         10 |         10 |         10 |         10 |        8.0 |                     10 |                      8.4 |
+| Miguel Escamilla Monroy           |         10 |         10 |         10 |         10 |        9.0 |                     10 |                      9.2 |
+| Alejandro Manuel Vargas Aldaco    |         10 |            |            |            |            |                    2.5 |                      0.5 |
+| Luis Enrique Rodríguez de la Rosa |         10 |            |            |            |            |                    2.5 |                      0.5 |
+| Juan Daniel Cortez Rojas          |         10 |         10 |         10 |         10 |            |                     10 |                        2 |
+| Manuel Sánchez Pavón              |            |            |         10 |         10 |        8.5 |                      5 |                      7.8 |
+| José Manuel Martínez Sánchez      |         10 |         10 |         10 |         10 |        9.0 |                     10 |                      9.2 |
+| David Bautista Cázares            |            |            |            |            |        9.0 |                      0 |                      7.2 |
+#+TBLFM: $7=vsum($2..$5)/4::$8=(($6 * 8) / 10) + (($7 * 2) / 10)
 
 Las calificaciones que contienen un asterisco se encuentran condicionadas.
