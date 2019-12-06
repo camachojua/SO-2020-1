@@ -9,7 +9,7 @@
 | Miguel Escamilla Monroy           |         10 |         10 |         10 |         10 |        9.0 |                     10 |                      9.2 |
 | Alejandro Manuel Vargas Aldaco    |         10 |            |            |            |            |                    2.5 |                      0.5 |
 | Luis Enrique Rodríguez de la Rosa |         10 |            |            |            |            |                    2.5 |                      0.5 |
-| Jesús Daniel Verdugo Rodríguez    |            |            |            |            |        7.0 |                        |                      5.6 |
+| Jesús Daniel Verdugo Rodríguez    |            |            |            |            |        7.5 |                        |                      6.0 |
 | Juan Daniel Cortez Rojas          |         10 |         10 |         10 |         10 |        8.0 |                     10 |                      8.4 |
 | José Manuel Martínez Sánchez      |         10 |         10 |         10 |         10 |        9.0 |                     10 |                      9.2 |
 | David Bautista Cázares            |            |            |            |            |        9.0 |                        |                      7.2 |
